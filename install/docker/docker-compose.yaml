@@ -1,0 +1,112 @@
+version: '2.1'
+services:
+  # -----------------------------------------------------------------------------------
+  # zookeeper
+  # -----------------------------------------------------------------------------------
+  zookeeper:
+    image: bitnami/zookeeper:3.7.0
+    hostname: zookeeper
+    container_name: zookeeper
+    restart: on-failure
+    ports:
+      - "2181:2181"
+    healthcheck:
+      test: nc -z localhost 2181 || exit -1
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    environment:
+      # To allow unauthenticated users to connect to zookeeper - Dev Only Setting
+      ALLOW_ANONYMOUS_LOGIN: "yes"
+
+  # -----------------------------------------------------------------------------------
+  # Kafka
+  # -----------------------------------------------------------------------------------
+  kafka:
+    image: bitnami/kafka:3.1.0
+    hostname: kafka
+    container_name: kafka
+    restart: on-failure
+    ports:
+      - "9092:9092"
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+    healthcheck:
+      test: ps aux | grep [k]afka || exit -1
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    environment:
+      KAFKA_CFG_ZOOKEEPER_CONNECT: zookeeper:2181
+      # Since we are using PLAINTEXT for all listeners, need to set this for Bitnami Image
+      ALLOW_PLAINTEXT_LISTENER: "yes"
+      # Setup custom listeners so that the broker listens on 2 different ports
+      # If we have only one - kafka:, then we can access it from another docker container, but not from host
+      # If we name it localhost:, then we can access it from host, but cannot from another docker container
+      # If we hardcoded an IP, we could have used the same host:port from both within docker and from host
+      # That is why we need both. Advertise the respective custom listener ports on different host names
+      KAFKA_LISTENERS: PLAINTEXT://:29092,PLAINTEXT_HOST://:9092
+      # Tell kafka to not authenticate for the custom listeners
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+
+  # -----------------------------------------------------------------------------------
+  # MySQL
+  # -----------------------------------------------------------------------------------
+  mysql:
+    image: mysql:8.0
+    hostname: mysql
+    container_name: mysql
+    restart: on-failure
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: mysql $$MYSQL_DATABASE -u$$MYSQL_USER -p$$MYSQL_PASSWORD -e 'SELECT 1;'
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    environment:
+      MYSQL_ROOT_PASSWORD: jetpack-demo-pwd
+      MYSQL_USER: jetpack-demo-user
+      MYSQL_PASSWORD: jetpack-demo-pwd
+      MYSQL_DATABASE: jetpack-demo-db
+
+  # -----------------------------------------------------------------------------------
+  # Mongo DB
+  # -----------------------------------------------------------------------------------
+  mongo:
+    image: mongo:5
+    hostname: mongo
+    container_name: mongo
+    restart: on-failure
+    ports:
+      - "27017:27017"
+    healthcheck:
+      test: mongo --eval 'db.getMongo()'
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: jetpack-demo-user
+      MONGO_INITDB_ROOT_PASSWORD: jetpack-demo-pwd
+
+  # ------------------------------------------------------------------------------------------------------------
+  # Redis
+  # https://hub.docker.com/r/bitnami/redis/
+  # ------------------------------------------------------------------------------------------------------------
+  redis:
+    image: 'bitnami/redis:latest'
+    restart: on-failure
+    hostname: redis
+    container_name: redis
+    ports:
+      - "6379:6379"
+    environment:
+      REDIS_PASSWORD: jp-redis-pwd
+
+
