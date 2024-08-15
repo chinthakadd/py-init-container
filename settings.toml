@@ -1,2 +1,21 @@
+# Mongo DB Related Settings
+MONGO_ENABLED=true
 MONGO_URL="mongodb://localhost:27017"
+MONGO_RETRY_COUNT=100
+
+# Kafka Related Settings
+KAFKA_ENABLED=true
 KAFKA_BOOTSTRAP_URL="localhost:9092"
+KAFKA_RETRY_COUNT=100
+
+# Kafka Topic Related Settings
+KAFKA_TOPIC_ENABLED=false
+KAFKA_TOPIC_LIST=["topic-a", "topic-b"]
+
+POSTGRES_ENABLED=true
+POSTGRES_HOST="localhost"
+POSTGRES_PORT=5432
+POSTGRES_USER="testuser"
+POSTGRES_PWD="testpwd"
+POSTGRES_DB="testdb"
+POSTGRES_RETRY_COUNT=100

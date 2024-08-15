@@ -110,3 +110,15 @@ services:
       REDIS_PASSWORD: jp-redis-pwd
 
 
+  # ------------------------------------------------------------------------------------------------------------
+  # Postgres
+  # ------------------------------------------------------------------------------------------------------------
+  postgres:
+    image: postgres:14
+    container_name: postgres
+    environment:
+      POSTGRES_USER: testuser
+      POSTGRES_PASSWORD: testpwd
+      POSTGRES_DB: testdb
+    ports:
+      - "5432:5432"
