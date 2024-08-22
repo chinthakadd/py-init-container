@@ -3,7 +3,6 @@ import logging
 from pyinitcontainer.conf.log_formatter import LogFormatter
 from pyinitcontainer.health.infrastructure_health_indicator import InfrastructureHealthIndicator
 from pyinitcontainer.health.kafka_health_indicator import KafkaHealthIndicator
-from pyinitcontainer.health.kafka_topic_health_indicator import KafkaTopicHealthIndicator
 from pyinitcontainer.health.mongo_health_indicator import MongoHealthIndicator
 from pyinitcontainer.health.postgres_health_indicator import PostgresHealthIndicator
 
@@ -24,7 +23,7 @@ def main():
     # connection to mongo
     InfrastructureHealthIndicator(
         [
-            KafkaHealthIndicator(), MongoHealthIndicator(), KafkaTopicHealthIndicator(), PostgresHealthIndicator()
+            KafkaHealthIndicator(), MongoHealthIndicator(), PostgresHealthIndicator()
         ]
     ).is_healthy()
 

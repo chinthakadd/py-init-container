@@ -7,10 +7,8 @@ MONGO_RETRY_COUNT=100
 KAFKA_ENABLED=true
 KAFKA_BOOTSTRAP_URL="localhost:9092"
 KAFKA_RETRY_COUNT=100
-
 # Kafka Topic Related Settings
-KAFKA_TOPIC_ENABLED=false
-KAFKA_TOPIC_LIST=["topic-a", "topic-b"]
+KAFKA_TOPIC_LIST=["topic-a", "topic-b", "topic-c"]
 
 POSTGRES_ENABLED=true
 POSTGRES_HOST="localhost"
