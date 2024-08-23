@@ -19,7 +19,7 @@ class KafkaHealthIndicator(HealthIndicator):
     def __init__(self):
         super().__init__()
         self.__bootstrap_server_url = settings.kafka_bootstrap_url
-        self.__kafka_topics = settings.kafka_topic_list
+        self.__kafka_topics = [] if 'kafka_topic_list' not in settings else settings.kafka_topic_list
         self.__logger = logging.getLogger(__class__.__name__)
 
     def is_enabled(self) -> bool:
